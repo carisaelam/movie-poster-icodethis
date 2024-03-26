@@ -7,22 +7,47 @@ const url = "http://www.omdbapi.com/?i=tt3896198&apikey=93dd9d60";
 const apiKey = "93dd9d60";
 const apiUrl = "http://www.omdbapi.com/";
 const card = document.querySelector(".card");
-const html = `
+
+// http://www.omdbapi.com/?t=moana&apikey=93dd9d60
+// http://www.omdbapi.com/?t=babymama&apikey=93dd9d60
+// http://www.omdbapi.com/?apikey=93dd9d60&t=moana
+
+// Function to fetch movie data by title
+async function fetchMovieDataByTitle(title) {
+  const url = `${apiUrl}?apikey=${apiKey}&t=${encodeURIComponent(title)}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching movie data:", error);
+    return null;
+  }
+}
+
+// Example usage
+const movieTitle = "Homeward Bound";
+
+fetchMovieDataByTitle(movieTitle)
+  .then((data) => {
+    const html = `
 
 <main class="card">
 <!-- header section -->
 <div class="header">
   <hgroup class="header__title">
-    <h1 class="title">Moana</h1>
-    <p class="genre">Animation, Adventure, Comedy</p>
+    <h1 class="title">${data.Title}</h1>
+    <p class="genre">${data.Genre}</p>
   </hgroup>
-  <p class="ratings"><span>7.6</span>/10</p>
+  <p class="ratings"><span>${data.Ratings[0].Value}</span></p>
 </div>
 <!-- info section -->
 <div class="info__container">
   <div class="poster__container">
     <img
-      src="https://m.media-amazon.com/images/M/MV5BMjI4MzU5NTExNF5BMl5BanBnXkFtZTgwNzY1MTEwMDI@._V1_SX300.jpg"
+      src="${data.Poster}"
       alt="movie poster"
       class="poster"
     />
@@ -30,9 +55,7 @@ const html = `
   <div class="info__text__container">
     <h2 class="info__text__title">About the movie</h2>
     <p class="info__plot">
-      In ancient Polynesia, when a terrible curse incurred by the demigod
-      Maui reaches Moana's island, she answers the Ocean's call to seek
-      out Maui to set things right.
+      ${data.Plot}
     </p>
     <div class="info__grid">
       <div class="info__grid-actors">
@@ -75,32 +98,7 @@ const html = `
 
 
 `;
-
-// http://www.omdbapi.com/?t=moana&apikey=93dd9d60
-// http://www.omdbapi.com/?t=babymama&apikey=93dd9d60
-// http://www.omdbapi.com/?apikey=93dd9d60&t=field-of-dreams
-
-// Function to fetch movie data by title
-async function fetchMovieDataByTitle(title) {
-  const url = `${apiUrl}?apikey=${apiKey}&t=${encodeURIComponent(title)}`;
-
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error("Error fetching movie data:", error);
-    return null;
-  }
-}
-
-// Example usage
-const movieTitle = "Moana";
-
-fetchMovieDataByTitle(movieTitle)
-  .then((data) => {
-    console.log("Move data:", data);
+    console.log("Movie data:", data);
     const newHTML = document.createElement("main");
     newHTML.innerHTML = html;
     document.body.appendChild(newHTML);
